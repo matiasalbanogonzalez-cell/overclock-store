@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/space-grotesk";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink-950: #05060a;
+  --color-ink-900: #0a0c13;
+  --color-ink-850: #0f121c;
+  --color-ink-800: #151927;
+  --color-ink-700: #1f2436;
+  --color-ink-600: #2c3249;
+
+  --color-neon: #3cf0ff;
+  --color-neon-strong: #00dcf0;
+  --color-volt: #b26bff;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-ink-950 font-sans text-zinc-200 antialiased;
+  }
+  ::selection {
+    @apply bg-neon/30 text-white;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-neon;
+  }
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition
+    disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-neon text-ink-950 shadow-[0_0_24px_-6px_var(--color-neon)] hover:bg-white
+    hover:shadow-[0_0_32px_-4px_var(--color-neon)];
+}
+@utility btn-ghost {
+  @apply btn border border-ink-600 bg-ink-850 text-zinc-100 hover:border-neon/60 hover:text-white;
+}
+@utility btn-danger {
+  @apply btn border border-rose-500/40 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20;
+}
+@utility card {
+  @apply rounded-2xl border border-ink-700 bg-ink-900;
+}
+@utility label {
+  @apply mb-1.5 block text-xs font-medium tracking-wide text-zinc-400 uppercase;
+}
+@utility input {
+  @apply w-full rounded-xl border border-ink-600 bg-ink-850 px-3.5 py-2.5 text-sm text-zinc-100
+    placeholder:text-zinc-500 transition focus:border-neon/70 focus:outline-none focus:ring-2 focus:ring-neon/20;
+}
+@utility badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset;
+}
+@utility grid-bg {
+  background-image:
+    linear-gradient(to right, rgb(60 240 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(60 240 255 / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+@utility text-gradient {
+  @apply bg-gradient-to-r from-neon via-sky-300 to-volt bg-clip-text text-transparent;
+}
