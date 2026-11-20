@@ -48,7 +48,10 @@ export const products = pgTable(
     /** Precio "antes", para mostrar el descuento */
     compareAtPrice: integer("compare_at_price"),
     stock: integer("stock").notNull().default(0),
+    /** Foto de portada (= la primera de images). Si no hay, se muestra una ilustración generada */
     image: text("image"),
+    /** Todas las fotos del producto, en orden */
+    images: jsonb("images").$type<string[]>().notNull().default([]),
     specs: jsonb("specs").$type<ProductSpec[]>().notNull().default([]),
     featured: boolean("featured").notNull().default(false),
     active: boolean("active").notNull().default(true),

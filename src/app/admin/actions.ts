@@ -10,6 +10,7 @@ import { login, logout, requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/format";
 import { notifyStatus } from "@/lib/order-events";
 import { changeOrderStatus } from "@/lib/orders";
+import { MAX_IMAGES_PER_PRODUCT } from "@/lib/storage";
 
 // ─── Sesión ──────────────────────────────────────────────────
 
@@ -44,9 +45,28 @@ const productSchema = z
       .transform((v) => (v === "" ? null : v)),
     stock: z.coerce.number().int("Número entero").min(0, "No puede ser negativo").max(100_000),
     categoryId: z.string().min(1, "Elegí una categoría"),
-    image: z
-      .union([z.literal(""), z.string().trim().url("Tiene que ser una URL https válida").startsWith("https://", "Tiene que empezar con https://")])
-      .transform((v) => v || null),
+    images: z
+      .string()
+      .default("[]")
+      .transform((v, ctx) => {
+        try {
+          return JSON.parse(v) as unknown;
+        } catch {
+          ctx.addIssue({ code: "custom", message: "Fotos inválidas" });
+          return z.NEVER;
+        }
+      })
+      .pipe(
+        z
+          .array(
+            z
+              .string()
+              .max(500)
+              // Solo links https o archivos subidos al propio sitio
+              .regex(/^(https:\/\/\S+|\/uploads\/productos\/[\w-]+\.(jpg|png|webp|avif))$/, "Hay una foto con un link inválido"),
+          )
+          .max(MAX_IMAGES_PER_PRODUCT, `Máximo ${MAX_IMAGES_PER_PRODUCT} fotos`),
+      ),
     specs: z.string().max(3000).default(""),
     featured: z.boolean(),
     active: z.boolean(),
@@ -94,7 +114,8 @@ export async function saveProductAction(_prev: ProductFormState, formData: FormD
   });
   if (clash) return { fieldErrors: { slug: "Ya existe un producto con este slug" }, values };
 
-  const row = { ...data, slug, specs: parseSpecs(specs) };
+  // La primera foto es la portada que se usa en las tarjetas de la tienda
+  const row = { ...data, slug, specs: parseSpecs(specs), image: data.images[0] ?? null };
   if (id) {
     await db.update(products).set(row).where(eq(products.id, id));
   } else {

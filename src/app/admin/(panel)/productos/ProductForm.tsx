@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { submitWithoutReset } from "@/lib/use-form-action";
 import type { Category, Product } from "@/db/schema";
 import { saveProductAction } from "../../actions";
+import { ImageUploader } from "./ImageUploader";
 
 export function ProductForm({ product, categories }: { product?: Product; categories: Category[] }) {
   const [state, action, pending] = useActionState(saveProductAction, {});
@@ -67,7 +68,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
       </section>
 
       <section className="card grid gap-4 p-6">
-        {field("image", "URL de imagen (opcional)", { type: "url", placeholder: "https://… — si lo dejás vacío se genera una ilustración" }, product?.image)}
+        <ImageUploader initial={product?.images.length ? product.images : product?.image ? [product.image] : []} error={err("images")} />
         {field("slug", "Slug / URL del producto", { placeholder: "Se genera solo a partir del nombre" }, product?.slug)}
         <div>
           <label htmlFor="specs" className="label">

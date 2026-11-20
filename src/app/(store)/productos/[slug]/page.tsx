@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductGallery } from "@/components/ProductGallery";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductPurchase } from "@/components/ProductPurchase";
 import { getProductBySlug, getRelatedProducts } from "@/lib/catalog";
@@ -23,6 +24,8 @@ export default async function ProductPage({ params }: Props) {
   const related = await getRelatedProducts(product.categoryId, product.id);
   const off = discountPercent(product.price, product.compareAtPrice);
   const installment = Math.ceil(product.price / 6);
+  const gallery = product.images.length ? product.images : product.image ? [product.image] : [];
+  const offBadge = off > 0 ? <span className="absolute top-4 left-4 rounded-lg bg-volt px-3 py-1 text-sm font-bold text-white">-{off}% OFF</span> : null;
 
   return (
     <div className="container-page py-10">
@@ -35,10 +38,14 @@ export default async function ProductPage({ params }: Props) {
       </nav>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-3xl border border-ink-700 bg-ink-900">
-          <ProductImage image={product.image} seed={product.slug} category={product.category.slug} alt={product.name} sizes="(max-width: 1024px) 100vw, 50vw" priority />
-          {off > 0 && <span className="absolute top-4 left-4 rounded-lg bg-volt px-3 py-1 text-sm font-bold text-white">-{off}% OFF</span>}
-        </div>
+        {gallery.length > 0 ? (
+          <ProductGallery images={gallery} alt={product.name} badge={offBadge} />
+        ) : (
+          <div className="relative aspect-square overflow-hidden rounded-3xl border border-ink-700 bg-ink-900">
+            <ProductImage image={null} seed={product.slug} category={product.category.slug} alt={product.name} />
+            {offBadge}
+          </div>
+        )}
 
         <div className="flex flex-col">
           <p className="text-sm font-semibold tracking-wider text-neon uppercase">{product.brand}</p>

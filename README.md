@@ -27,6 +27,7 @@ E-commerce full-stack de periféricos gamer: catálogo con filtros, carrito, che
 - Resumen: ventas de 30 días, ticket promedio, gráfico de ventas por día, alertas de stock bajo
 - Pedidos: filtros por estado, búsqueda, detalle y cambio de estado (enviado / entregado / cancelado)
 - Productos: alta, edición, publicar u ocultar, destacados y especificaciones
+- **Subida de fotos** (hasta 8 por producto): arrastrar y soltar, elegir portada, reordenar; validación del tipo real de archivo. Se guardan en Vercel Blob (o en `public/uploads` en desarrollo)
 
 **Mails**: confirmación de compra al cliente, aviso de venta a la tienda, aviso de envío y de pago rechazado.
 
@@ -43,6 +44,7 @@ E-commerce full-stack de periféricos gamer: catálogo con filtros, carrito, che
 | Estado del carrito | Zustand (persistido en localStorage) |
 | Auth | jose (JWT) + bcrypt |
 | Mails | Nodemailer (SMTP) |
+| Fotos | Vercel Blob |
 
 ## Cómo correrlo en tu PC (Windows)
 
@@ -104,7 +106,8 @@ En tu aplicación de Mercado Pago → **Webhooks** → URL `https://TU-DOMINIO/a
 1. Subí el proyecto a un repo de GitHub.
 2. En https://vercel.com → *Add New Project* → importá el repo.
 3. Cargá las variables de entorno del `.env` (con `NEXT_PUBLIC_SITE_URL` = la URL que te da Vercel).
-4. *Deploy*. Las tablas ya están creadas en Neon por el paso 3.
+4. Para las fotos: en el proyecto de Vercel → **Storage → Create → Blob** → conectalo al proyecto. Vercel agrega solo `BLOB_READ_WRITE_TOKEN`.
+5. *Deploy*. Las tablas ya están creadas en Neon por el paso 3.
 
 Para el portfolio conviene dejar `PAYMENTS_MODE="demo"` (cualquiera puede probar la compra completa) o Mercado Pago con credenciales de **prueba**.
 
